@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oyinlar Tarixi</title>
+<style>
+body {
+  margin:0;
+  padding:0;
+  font-family: Arial, sans-serif;
+  background-image: url('background.jpg');
+  background-size: cover;
+  background-position: center;
+  text-align:center;
+  color:white;
+}
+
+/* Knopkalar va input */
+button {
+  padding:10px 20px;
+  font-size:16px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  margin:10px;
+}
+input[type=email] {
+  padding:10px;
+  font-size:16px;
+  border-radius:5px;
+  border:none;
+  margin-top:10px;
+  width:250px;
+}
+
+/* Formlarni markazga olish */
+#loginForm, #genderForm, #welcomeScreen, #oyinScreen, #popup {
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+}
+
+/* Hide all forms initially except login */
+#genderForm, #welcomeScreen, #oyinScreen, #popup {
+  display:none;
+}
+
+/* Jins tanlash ikonkalari */
+.gender-option {
+  display:inline-block;
+  cursor:pointer;
+  margin:20px;
+}
+.gender-option img {
+  width:100px;
+  border:2px solid white;
+  border-radius:50%;
+}
+
+/* Xush kelibsiz ekrani */
+#welcomeScreen img {
+  width:150px;
+  margin:20px;
+  cursor:pointer;
+}
+
+/* Oyinlar ekrani */
+.oyin-card {
+  display:inline-block;
+  margin:20px;
+  cursor:pointer;
+  border:2px solid #fff;
+  border-radius:10px;
+  overflow:hidden;
+  background-color: rgba(255,255,255,0.2);
+}
+.oyin-card img {
+  width:150px;
+  display:block;
+  margin:0 auto;
+  border-bottom:1px solid #fff;
+}
+
+/* Popup */
+#popup {
+  width:100%;
+  height:100%;
+  background-color: rgba(0,0,0,0.7);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:1000;
+}
+.popup-content {
+  position:relative;
+  padding:20px;
+  width:80%;
+  max-width:600px;
+  border-radius:10px;
+  text-align:left;
+  background-color: rgba(0,0,0,0.9);
+  color:white;
+  box-shadow:0 0 20px rgba(0,0,0,0.7);
+}
+.popup-content img {
+  width:100px;
+  margin:5px;
+  border-radius:5px;
+  border:1px solid #fff;
+}
+.close-btn {
+  position:absolute;
+  top:10px;
+  right:15px;
+  font-size:20px;
+  cursor:pointer;
+  color:white;
+  font-weight:bold;
+}
+</style>
+</head>
+<body>
+
+<!-- Gmail kirish -->
+<div id="loginForm">
+  <h2>Gmailingizni kiriting:</h2>
+  <input type="email" id="emailInput" placeholder="example@gmail.com">
+  <br>
+  <button onclick="submitEmail()">Keyingi</button>
+</div>
+
+<!-- Jins tanlash -->
+<div id="genderForm">
+  <h2>Jinsingizni tanlang:</h2>
+  <div class="gender-option" onclick="selectGender('Erkak')">
+    <img src="male_icon.png" alt="Erkak"><br>Erkak
+  </div>
+  <div class="gender-option" onclick="selectGender('Ayol')">
+    <img src="female_icon.png" alt="Ayol"><br>Ayol
+  </div>
+  <div class="gender-option" onclick="selectGender('Trans')">
+    <img src="trans_icon.png" alt="Trans"><br>Trans
+  </div>
+</div>
+
+<!-- Xush kelibsiz -->
+<div id="welcomeScreen">
+  <h1>Gaz naxx**</h1>
+  <p>Welcome to Gaz naxx**</p>
+  <img src="gaznaxx_icon.png" alt="Gaz Naxx" onclick="showOyinScreen()">
+</div>
+
+<!-- Oyinlar ekrani -->
+<div id="oyinScreen">
+  <h2>Qaysi o‘yin haqida ma’lumot bilishni hohlasangiz, uni ustiga bosing:</h2>
+  <div class="oyin-card" onclick="showPopup('pubg')">
+    <img src="pubg.png" alt="PUBG"><h3>PUBG</h3>
+  </div>
+  <div class="oyin-card" onclick="showPopup('freefire')">
+    <img src="freefire.png" alt="Free Fire"><h3>Free Fire</h3>
+  </div>
+  <div class="oyin-card" onclick="showPopup('tanksblitz')">
+    <img src="tanksblitz.png" alt="Tanks Blitz"><h3>Tanks Blitz</h3>
+  </div>
+  <div class="oyin-card" onclick="showPopup('efootball')">
+    <img src="efootball.png" alt="eFootball"><h3>eFootball</h3>
+  </div>
+</div>
+
+<!-- Popup malumotlar -->
+<div id="popup" style="display:none;">
+  <div class="popup-content" id="popupContent">
+    <span class="close-btn" onclick="closePopup()">&times;</span>
+    <div id="popupText"></div>
+    <div id="popupImages"></div>
+  </div>
+</div>
+
+<script>
+// Global qiymatlar
+let userEmail = '';
+let userGender = '';
+
+// Gmail tekshiruvi
+function submitEmail(){
+  const email = document.getElementById('emailInput').value.trim();
+  const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+  if(gmailRegex.test(email)){
+    userEmail = email;
+    document.getElementById('loginForm').style.display='none';
+    document.getElementById('genderForm').style.display='block';
+  } else {
+    alert('Iltimos, to‘g‘ri Gmail kiriting (masalan: example@gmail.com)!');
+  }
+}
+
+// Jins tanlash
+function selectGender(gender){
+  userGender = gender;
+  document.getElementById('genderForm').style.display='none';
+  document.getElementById('welcomeScreen').style.display='block';
+}
+
+// Xush kelibsiz -> o‘yinlar
+function showOyinScreen(){
+  document.getElementById('welcomeScreen').style.display='none';
+  document.getElementById('oyinScreen').style.display='block';
+}
+
+// Oyinlar malumotlari (qisqa versiya)
+const oyinData = {
+  pubg: {
+    name: "PUBG: Battlegrounds",
+    text: "PUBG – ko'p o'yinchi online jangovar royale o'yini. O'yinda 100 tagacha o'yinchi ishtirok etadi. 2017-yilda Windows, mobil va konsollar uchun chiqarildi.",
+    images:["pubg.png"]
+  },
+  freefire:{
+    name:"Free Fire",
+    text:"Free Fire – 2017-yilda Garena tomonidan Android va iOS uchun chiqarilgan bepul mobil multiplayer royale o'yini. 2019-yilda mashhurlikka erishdi.",
+    images:["freefire.png"]
+  },
+  efootball:{
+    name:"eFootball",
+    text:"eFootball – Konami tomonidan ishlab chiqilgan futbol video o'yini. Oldingi Pro Evolution Soccer franshizasining yangilangan versiyasi. Bepul o‘ynaladi.",
+    images:["efootball.png"]
+  },
+  tanksblitz:{
+    name:"Tanks Blitz",
+    text:"Tanks Blitz – bepul ko'p o'yinchi PVP tank o'yini. Turli sinfdagi tanklar mavjud. App Store va Google Play orqali yuklab olish mumkin.",
+    images:["tanksblitz.png"]
+  }
+};
+
+function showPopup(key){
+  const oyin = oyinData[key];
+  const textDiv = document.getElementById('popupText');
+  const imagesDiv = document.getElementById('popupImages');
+
+  textDiv.innerHTML = `<h2>${oyin.name}</h2><p>${oyin.text}</p>`;
+  
+  imagesDiv.innerHTML='';
+  oyin.images.forEach(img=>{
+    imagesDiv.innerHTML+=`<img src="${img}" alt="${oyin.name}">`;
+  });
+  document.getElementById('popup').style.display='flex';
+}
+
+function closePopup(){
+  document.getElementById('popup').style.display='none';
+}
+</script>
+
+</body>
+</html>
